@@ -93,8 +93,15 @@ class WpaSupplicantConf:
 
 
 def dequote(v):
-    if len(v) < 2:
-        return v
     if v.startswith('"') and v.endswith('"'):
         return v[1:-1]
-    return v
+    try:
+        # try to cast to int
+        return int(right)
+    except ValueError:
+        try: 
+            # try to cast to float
+            right = float(right)
+        except ValueError:
+            # well then it's a string...
+            return v
