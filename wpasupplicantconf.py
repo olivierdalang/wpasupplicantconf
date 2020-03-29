@@ -53,6 +53,17 @@ class WpaSupplicantConf:
                 if network is None:
                     self._fields[left] = right
                 else:
+                    right = dequote(right)
+
+                    # try to cast as number (to avoid quoting on write)
+                    try: 
+                        right = int(right)
+                    except ValueError:
+                        try: 
+                            right = float(right)
+                        except ValueError:
+                            pass
+
                     network[left] = right
 
     def fields(self):
@@ -75,6 +86,8 @@ class WpaSupplicantConf:
             f.write("\nnetwork={\n")
             f.write('    ssid="{}"\n'.format(ssid))
             for name, value in info.items():
+                if isinstance(value, str):
+                    value = '"'+value+'"'
                 f.write("    {}={}\n".format(name, value))
             f.write("}\n")
 
